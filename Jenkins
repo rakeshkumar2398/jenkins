@@ -15,10 +15,9 @@ pipeline{
 			agent {label 'slave1'}
 			steps {
 				echo 'Get code from git'
-				script {
-					git branch: 'main', 
-					url: 'https://github.com/rakeshkumar2398/jenkins.git'	
-					stash includes: "**/*", name:'srccode'
+				git branch: 'main', 
+				url: 'https://github.com/rakeshkumar2398/jenkins.git'	
+				stash includes: "**/*", name:'srccode'
 					}
 				}	
 			}
@@ -26,12 +25,10 @@ pipeline{
 			agent {label 'slave2'}
 			steps {
 				echo 'Building war file'
-				steps {
-					unstash 'srccode'
-					sh 'mvn build install'
+				unstash 'srccode'
+				sh 'mvn build install'
 					}
 				}
-			}
 		stage('Deploy to tomcat'){
 			agent {label 'slave2'}
 			steps {
