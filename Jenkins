@@ -1,0 +1,53 @@
+pipeline{
+	agent none
+	stages{
+		stage("Workspace clean"){
+		agent any{
+			steps{
+				echo "Workspace cleaning"
+				script{ 
+					cleanWs() 
+					
+				}
+			}
+		}
+	}
+		stage('Clone code'){
+			agent {label 'slave1'}
+			steps {
+				echo 'Get code from git'
+				script {
+					git branch: 'main', 
+					url: 'https://github.com/rakeshkumar2398/jenkins.git'	
+					stash includes: "**/*", name:'srccode'
+					}
+				}	
+			}
+		stage('Build using maven'){
+			agent {label 'slave2'}
+			steps {
+				echo 'Building war file'
+				steps {
+					unstash 'srccode'
+					sh 'mvn build install'
+					}
+				}
+			}
+		stage('Deploy to tomcat'){
+			agent (label 'slave2')
+			steps {
+				echo 'Deploying to tomcat'
+				deploy adapters: [tomcat9(credentialsId: 'tomcat', path: '', url: 'http://13.218.234.7:8081/')],
+				contextPath: 'Jenkins-Tomcat', war: '**/*.war'
+				}
+			}
+		}
+	post{
+		success{
+			echo 'sucessfully done '
+			}
+		failure{
+			echo 'Failed'
+		}	
+	}
+}	
