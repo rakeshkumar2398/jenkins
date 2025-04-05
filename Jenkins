@@ -30,9 +30,7 @@ pipeline{
             		agent { label 'slave2' }
             		steps {
                 		echo 'Deploying to tomcat'
-                		deploy adapters: [tomcat9(credentialsId: 'tomcat',path: '',url: 'http://13.218.234.7:8081/')],
-                contextPath: 'Jenkins-Tomcat',
-                war: '**/*.war'
+                		deploy adapters: [tomcat9(credentialsId: 'tomcat', path: '', url: 'http://13.218.234.7:8081/')], contextPath: 'APP_DEPLOY', war: '**/*.war'
 				}
 			}
 		}
