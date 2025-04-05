@@ -23,7 +23,7 @@ pipeline{
 			steps {
 				echo 'Building war file'
 				unstash 'srccode'
-				sh 'mvn build install'
+				sh 'mvn clean install'
 					}
 				}
 		stage('Deploy to tomcat') {
