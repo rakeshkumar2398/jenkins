@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('SCM Clone') {
+            steps {
+                echo 'GET CODE FROM GIT'
+                git branch: 'main', url: 'https://github.com/rakeshkumar2398/jenkins.git'
+            }
+        }
+
+        stage('MAKING WAR') {
+            steps {
+                script {
+                    try {
+                        // Intentional typo to trigger failure
+                        sh 'mvn clean installl'
+                    } catch (Exception e) {
+                        echo "Maven build failed: ${e.message}"
+                    }
+                }
+            }
+        }
+
+        stage('Final stage') {
+            steps {
+                sh 'echo "skipped."'
+            }
+        }
+    }
+}
+
