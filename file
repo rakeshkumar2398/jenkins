@@ -33,15 +33,7 @@ pipeline {
         stage('Deploy to tomcat') {
             steps {
                 echo 'Deploying to tomcat'
-                deploy adapters: [
-                    tomcat9(
-                        credentialsId: 'tomcat',
-                        path: '',
-                        url: 'http://13.218.234.7:8081/'
-                    )
-                ],
-                contextPath: 'APP_DEPLOY',
-                war: '**/*.war'
+                deploy adapters: [tomcat9(credentialsId: 'tomcat', path: '', url: 'http://54.221.28.191:8081')], contextPath: 'Parallel', war: '**/*.war'
             }
         }
     }
