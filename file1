@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+    stages {
+        stage("Workspace clean") {
+            steps {
+                echo "Workspace cleaning"
+                cleanWs() 
+            }
+        }
+        stage('Clone code') {
+            parallel {
+                stage('Clone from GitHub') {
+                    steps {
+                        echo 'Get code from git'
+                        git branch: 'main', 
+                            url: 'https://github.com/rakeshkumar2398/jenkins.git'
+							stash includes: "**/*", name:'srccode'
+                    }
+                }
+            }
+        }
+        stage('Build  using maven') {
+            steps {
+                echo 'Building war file'
+                unstash 'srccode'
+                sh 'mvn clean install'
+            }
+        }
+		stage ('install maven'){
+			steps{
+				echo'Install maven'
+				}
+		stage('start maven'){
+			steps{
+				echo 'start maven '
+				}
+        stage('Deploy to tomcat') {
+            steps {
+                echo 'Deploying to tomcat'
+                deploy adapters: [
+                    tomcat9(
+                        credentialsId: 'tomcat',
+                        path: '',
+                        url: 'http://13.218.234.7:8081/'
+                    )
+                ],
+                contextPath: 'APP_DEPLOY',
+                war: '**/*.war'
+            }
+        }
+    }
+}
